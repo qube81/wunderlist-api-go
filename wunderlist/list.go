@@ -4,6 +4,8 @@ import (
 	"strconv"
 )
 
+// https://developer.wunderlist.com/documentation/endpoints/list
+
 //List for WunderList
 type List struct {
 	ID                 int    `json:"id"`
