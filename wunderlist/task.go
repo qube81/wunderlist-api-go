@@ -50,7 +50,7 @@ func (a *TaskAPI) GetByListID(listID int, completed ...bool) (result []Task, err
 // Get get a specific task
 func (a *TaskAPI) Get(id int) (result Task, err error) {
 	var task Task
-	if err := a.client.Get("tasks/"+strconv.Itoa(id), &task, url.Values{}); err != nil {
+	if err := a.client.Get("tasks/"+strconv.Itoa(id), &task); err != nil {
 		return task, err
 	}
 

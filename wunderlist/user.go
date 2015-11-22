@@ -1,9 +1,5 @@
 package wunderlist
 
-import (
-	"net/url"
-)
-
 //User for WunderList
 type User struct {
 	ID        int    `json:"id"`
@@ -21,7 +17,7 @@ type UserAPI struct {
 // Get fetch the currently logged in user
 func (a *UserAPI) Get() (result User, err error) {
 	var user User
-	if err := a.client.Get("user", &user, url.Values{}); err != nil {
+	if err := a.client.Get("user", &user); err != nil {
 		return user, err
 	}
 

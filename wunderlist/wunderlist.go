@@ -44,14 +44,16 @@ func NewClient(clientID string, accessToken string) *Client {
 }
 
 // Get request HTTP GET via Client
-func (c *Client) Get(path string, v interface{}, query url.Values) (err error) {
+func (c *Client) Get(path string, v interface{}, query ...url.Values) (err error) {
 
 	req, err := http.NewRequest("GET", endpoint+path, nil)
 	if err != nil {
 		return err
 	}
 
-	req.URL.RawQuery = query.Encode()
+	if len(query) > 0 {
+		req.URL.RawQuery = query[0].Encode()
+	}
 	return Execute(c, req, v)
 }
 
