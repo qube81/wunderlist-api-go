@@ -2,11 +2,13 @@ package wunderlist
 
 import (
 	"encoding/json"
-	"github.com/k0kubun/pp"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"time"
 )
+
+// https://developer.wunderlist.com/documentation
 
 const (
 	endpoint = "https://a.wunderlist.com/api/v1/"
@@ -63,9 +65,9 @@ func Execute(c *Client, req *http.Request, v interface{}) (err error) {
 		return err
 	}
 
-	if err := json.Unmarshal(respBody, v); err != nil {
-		pp.Print(err)
+	if resp.StatusCode != 200 {
+		return errors.New(string(respBody))
 	}
 
-	return err
+	return json.Unmarshal(respBody, v)
 }
