@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -44,16 +45,40 @@ func NewClient(clientID string, accessToken string) *Client {
 }
 
 // Get request HTTP GET via Client
-func (c *Client) Get(path string, v interface{}, query ...url.Values) (err error) {
+func (c *Client) Get(path string, v interface{}, query url.Values) (err error) {
 
 	req, err := http.NewRequest("GET", endpoint+path, nil)
 	if err != nil {
 		return err
 	}
 
-	if len(query) > 0 {
-		req.URL.RawQuery = query[0].Encode()
+	if query != nil {
+		req.URL.RawQuery = query.Encode()
 	}
+	return Execute(c, req, v)
+}
+
+// Post request HTTP POST via Client
+func (c *Client) Post(path string, v interface{}, json string) (err error) {
+	req, err := http.NewRequest("POST", endpoint+path, strings.NewReader(json))
+	req.Header.Add("Content-Type", "application/json")
+
+	if err != nil {
+		return err
+	}
+
+	return Execute(c, req, v)
+}
+
+// Patch request HTTP POST via Client
+func (c *Client) Patch(path string, v interface{}, json string) (err error) {
+	req, err := http.NewRequest("PATCH", endpoint+path, strings.NewReader(json))
+	req.Header.Add("Content-Type", "application/json")
+
+	if err != nil {
+		return err
+	}
+
 	return Execute(c, req, v)
 }
 
@@ -62,7 +87,6 @@ func Execute(c *Client, req *http.Request, v interface{}) (err error) {
 
 	req.Header.Add("X-Client-ID", c.clientID)
 	req.Header.Add("X-Access-Token", c.accessToken)
-
 	resp, err := c.httpClient.Do(req)
 	defer resp.Body.Close()
 	if err != nil {

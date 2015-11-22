@@ -14,10 +14,10 @@ type UserAPI struct {
 	client *Client
 }
 
-// Get fetch the currently logged in user
+// Show fetch the currently logged in user
 func (a *UserAPI) Get() (result User, err error) {
 	var user User
-	if err := a.client.Get("user", &user); err != nil {
+	if err := a.client.Get("user", &user, nil); err != nil {
 		return user, err
 	}
 
