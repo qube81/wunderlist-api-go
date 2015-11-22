@@ -1,6 +1,8 @@
 package wunderlist
 
 import (
+	"encoding/json"
+	"github.com/k0kubun/pp"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -19,32 +21,33 @@ type Client struct {
 	clientID    string
 	accessToken string
 	httpClient  *http.Client
+	List        *ListAPI
 }
 
 // NewClient generate and return Client
 func NewClient(clientID string, accessToken string) *Client {
 
-	c := &Client{
-		clientID:    clientID,
-		accessToken: accessToken,
-		httpClient:  httpClient,
-	}
+	c := &Client{}
+	c.clientID = clientID
+	c.accessToken = accessToken
+	c.httpClient = httpClient
+	c.List = &ListAPI{client: c}
 
 	return c
 }
 
 // Get request HTTP GET via Client
-func (c *Client) Get(path string) (body string, err error) {
+func (c *Client) Get(path string, v interface{}) (err error) {
 
 	req, err := http.NewRequest("GET", endpoint+path, nil)
 	if err != nil {
-		return "", err
+		return err
 	}
-	return Execute(c, req)
+	return Execute(c, req, v)
 }
 
 // Execute HTTP request
-func Execute(c *Client, req *http.Request) (body string, err error) {
+func Execute(c *Client, req *http.Request, v interface{}) (err error) {
 
 	req.Header.Add("X-Client-ID", c.clientID)
 	req.Header.Add("X-Access-Token", c.accessToken)
@@ -52,13 +55,17 @@ func Execute(c *Client, req *http.Request) (body string, err error) {
 	resp, err := c.httpClient.Do(req)
 	defer resp.Body.Close()
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return string(respBody), err
+	if err := json.Unmarshal(respBody, v); err != nil {
+		pp.Print(err)
+	}
+
+	return err
 }

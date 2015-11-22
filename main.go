@@ -13,5 +13,9 @@ func main() {
 
 	client := wunderlist.NewClient(clientID, clientSecret)
 
-	pp.Print(client.Get("lists"))
+	allLists, _ := client.List.GetLists()
+	list, _ := client.List.GetList(allLists[1].ID)
+
+	pp.Print(allLists)
+	pp.Print(list)
 }
