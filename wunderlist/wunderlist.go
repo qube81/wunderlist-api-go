@@ -24,6 +24,7 @@ type Client struct {
 	accessToken string
 	httpClient  *http.Client
 	List        *ListAPI
+	User        *UserAPI
 }
 
 // NewClient generate and return Client
@@ -34,6 +35,7 @@ func NewClient(clientID string, accessToken string) *Client {
 	c.accessToken = accessToken
 	c.httpClient = httpClient
 	c.List = &ListAPI{client: c}
+	c.User = &UserAPI{client: c}
 
 	return c
 }
