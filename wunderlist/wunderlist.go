@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -25,6 +26,7 @@ type Client struct {
 	httpClient  *http.Client
 	List        *ListAPI
 	User        *UserAPI
+	Task        *TaskAPI
 }
 
 // NewClient generate and return Client
@@ -36,17 +38,20 @@ func NewClient(clientID string, accessToken string) *Client {
 	c.httpClient = httpClient
 	c.List = &ListAPI{client: c}
 	c.User = &UserAPI{client: c}
+	c.Task = &TaskAPI{client: c}
 
 	return c
 }
 
 // Get request HTTP GET via Client
-func (c *Client) Get(path string, v interface{}) (err error) {
+func (c *Client) Get(path string, v interface{}, query url.Values) (err error) {
 
 	req, err := http.NewRequest("GET", endpoint+path, nil)
 	if err != nil {
 		return err
 	}
+
+	req.URL.RawQuery = query.Encode()
 	return Execute(c, req, v)
 }
 
@@ -67,7 +72,7 @@ func Execute(c *Client, req *http.Request, v interface{}) (err error) {
 		return err
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode >= 400 {
 		return errors.New(string(respBody))
 	}
 

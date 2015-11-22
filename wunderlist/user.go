@@ -1,8 +1,8 @@
 package wunderlist
 
-import ()
-
-// https://developer.wunderlist.com/documentation/endpoints/list
+import (
+	"net/url"
+)
 
 //User for WunderList
 type User struct {
@@ -21,7 +21,7 @@ type UserAPI struct {
 // Get fetch the currently logged in user
 func (a *UserAPI) Get() (result User, err error) {
 	var user User
-	if err := a.client.Get("user", &user); err != nil {
+	if err := a.client.Get("user", &user, url.Values{}); err != nil {
 		return user, err
 	}
 
