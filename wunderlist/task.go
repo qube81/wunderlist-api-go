@@ -31,7 +31,7 @@ type TaskAPI struct {
 	client *Client
 }
 
-// GetByListID fetch the currently logged in user
+// GetByListID Tasks for a List with completed option
 func (a *TaskAPI) GetByListID(listID int, completed ...bool) (result []Task, err error) {
 	var tasks []Task
 	values := url.Values{}
@@ -45,4 +45,14 @@ func (a *TaskAPI) GetByListID(listID int, completed ...bool) (result []Task, err
 		return tasks, err
 	}
 	return tasks, nil
+}
+
+// Get get a specific task
+func (a *TaskAPI) Get(id int) (result Task, err error) {
+	var task Task
+	if err := a.client.Get("tasks/"+strconv.Itoa(id), &task, url.Values{}); err != nil {
+		return task, err
+	}
+
+	return task, nil
 }
