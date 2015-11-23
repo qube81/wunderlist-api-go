@@ -16,6 +16,8 @@ const (
 	endpoint = "https://a.wunderlist.com/api/v1/"
 )
 
+var client *Client
+
 var httpClient = &http.Client{
 	Timeout: time.Duration(5) * time.Second,
 }
@@ -33,6 +35,10 @@ type Client struct {
 // NewClient generate and return Client
 func NewClient(clientID string, accessToken string) *Client {
 
+	if client != nil {
+		return client
+	}
+
 	c := &Client{}
 	c.clientID = clientID
 	c.accessToken = accessToken
@@ -41,7 +47,9 @@ func NewClient(clientID string, accessToken string) *Client {
 	c.User = &UserAPI{client: c}
 	c.Task = &TaskAPI{client: c}
 
-	return c
+	client = c
+
+	return client
 }
 
 // Get request HTTP GET via Client
